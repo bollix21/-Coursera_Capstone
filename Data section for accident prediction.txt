@@ -1,0 +1,67 @@
+﻿Predicting Car Accidents and the Severity level of those Accidents
+Tracy T Clark
+09/25/20
+
+
+2. Data Engineering         
+
+2.1 Feature Selection
+Example dataset (Data-Collisions.csv)  was used and can be downloaded from this link:https://s3.us.cloud-object-storage.appdomain.cloud/cf-courses-data/CognitiveClass/DP0701EN/version-2/Data-Collisions.csv
+The goal was to predict accident severity (severity code column). It was noticed that only 2 codes (1-property damage, 2-injury) were included in the dataset but no other severity codes (2b-serious injury, 3-fatality). After reviewing all 37 attribute columns in the dataset, below 14 attributes were initially chosen for data analysis. Both features that indicate accident impact scale (people and vehicles involved) and factors that could potentially lead to accidents (location, weather, road, light conditions, driver behaviors) are included. Other columns with tracking information (e.g. keys, report number, etc.) and columns with duplicate information were not selected. Column “status” was used to eliminate data rows with “unmatched” status.
+   *         Accident Location
+         
+   *         Address Type
+         
+   *         Collision Type
+         
+   *         Person Count involved in accident
+         
+   *         Pedestrians involved in accident
+         
+   *         Bicycles involved in accident         
+        
+   *         Vehicle Count involved in accident
+         
+   *         Weather
+         
+   *         Road Condition
+         
+   *         Light Condition
+         
+   *         Speeding
+         
+   *         Whether inattention
+         
+   *         Whether driver(s) under influence
+         
+   *         Whether hit a parked car
+
+2.2 Dealing with Data Imbalance                 
+        
+From the dataset, there is a data imbalance issue as there are more severe code 1 cases than 2. In reality, a severe road accident is a more rare event than a minor accident (no injury). Since machine learning algorithms usually have difficulty learning from imbalanced datasets, this dataset was rebalanced using an under-sampling method with smaller dataset for analysis.
+  
+  
+
+Figure 1 Dataset count before and after rebalancing
+2.3  Data Understanding and Cleaning                 
+        
+Looking at count plot by collision types, it gives good information of what type collision is more likely to happen (e.g. more accidents from left turn than right turn and more likely to have injury). Other observations include if pedestrian(s) or cycle(s) involved, the chance of injury is significantly higher, and if hitting a parked car, the chance of injury is significantly lower. Based on these observations, whether hit a parked car, pedestrian and cycle involvement are considered useful features and these 3 attributes were selected for further model development.
+  
+
+Figure 2 Count plot by collision type
+From address count, table 1 lists top locations that are more prone to have accidents. Further data processing could be done to group addresses based on their accident injury occurrence ratio and one hot encoding technique can be used to convert data to binary variables and append to data frame, however the main interest of this case study was to understand effect of various factors, this address attribute was dropped and will be included in future study.
+  
+
+Table 1 Value count by address in descending order
+From address type count plot, it shows accidents happen more frequently at block while accidents happening at intersections are more likely to cause injury. This categorical feature of “alley”, “block”, “intersection” was converted to numerical values 0, 1, 2 and was selected for the model.
+  
+
+Figure 3 Count plot by address type
+Weather, road condition and light condition attributes were processed with simplified categories and converted to ordinal numbers based on potential impact on increasing accident risk. For example, light condition was converted to 1-bright daylight, 2-dust/dawn, 3-dark with lights on, 4-dark with no light. “Other” or “unknow” data was converted to 0 and removed from dataset. Linear regression analysis was also run between weather and road condition attributes and the R-squared score is 0.61 indicating decent correlation between the two. Therefore, only one attribute “weather” was kept for next step.
+For speeding, inattention, under-influence and hit-parked-car attributes, missing data entry was interpreted as “N” and then binary values were unified and converted to 0 or 1. For cases with a driver under influence, it shows there is a 60% elevated chance of causing injury compared to 50% otherwise. All these attributes were kept for building the model.
+
+
+  
+
+Figure 4 Count plot by whether-under-influence
+At last for the whole dataset, data rows with missing data entry were dropped. After data engineering, 11 features were selected with collision type and address location dropped.
